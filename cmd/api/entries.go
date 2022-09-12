@@ -5,9 +5,6 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"strconv"
-
-	"github.com/julienschmidt/httprouter"
 )
 
 // createEntryHandler for POST /v1/entries
@@ -17,12 +14,8 @@ func (app *application) createEntryHandler(w http.ResponseWriter, r *http.Reques
 
 // showEntryHandler for POST /v1/entries/:id
 func (app *application) showEntryHandler(w http.ResponseWriter, r *http.Request) {
-	//using ParamsFromContext func to get request as a slice
-	params := httprouter.ParamsFromContext(r.Context())
-
-	//getting value of id parameter
-	id, err := strconv.ParseInt(params.ByName("id"), 10, 64) //look for id in param var and return associated value
-	if err != nil || id < 1 {
+	id, err := app.readIDParam(r)
+	if err != nil {
 		http.NotFound(w, r)
 		return
 	}
